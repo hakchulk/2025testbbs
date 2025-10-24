@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import supabase from "./utils/supabase";
+import dayjs from "dayjs";
 
 function App() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     async function getPosts() {
-      const { data: posts } = await supabase.from("posts").select();
+      const data = await supabase.from("posts").select();
+      const { data: posts } = data;
 
       setPosts(posts);
-      console.log(posts);
+      console.log(data);
     }
 
     getPosts();
@@ -20,8 +22,8 @@ function App() {
       <ul>
         {posts.map((post) => (
           <li key={post.id}>
-            {post.id} / {post.title} / {post.name} / {post.content} /{" "}
-            {post.created_at}
+            {post.id} / {post.title} / {post.name} / {post.content} /
+            {dayjs(post.created_at).format("YYYY-MM-DD HH:mm:ss")}
           </li>
         ))}
       </ul>
