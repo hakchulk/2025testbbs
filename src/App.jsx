@@ -20,7 +20,8 @@ function App() {
       <ul>
         {posts.map((post) => (
           <li key={post.id}>
-            {post.id} / {post.title} / {post.name} / {post.content}
+            {post.id} / {post.title} / {post.name} / {post.content} /{" "}
+            {post.created_at}
           </li>
         ))}
       </ul>
