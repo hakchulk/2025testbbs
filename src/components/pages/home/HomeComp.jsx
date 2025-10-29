@@ -27,8 +27,8 @@ function HomeComp() {
         disableOnInteraction: true, // 사용자의 조작 후에도 자동 재생 유지
       }}
       // 3. 이벤트 핸들러 (선택 사항)
-      onSlideChange={() => console.log("slide change")}
-      onSwiper={(swiper) => console.log(swiper)}
+      // onSlideChange={() => console.log("slide change")}
+      // onSwiper={(swiper) => console.log(swiper)}
       // 사용자 정의 CSS 클래스
       className="mySwiper"
     >
