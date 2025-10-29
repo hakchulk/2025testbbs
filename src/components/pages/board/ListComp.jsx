@@ -19,6 +19,21 @@ function ListComp() {
     getPosts();
   }, []);
 
+  function deleteid(id) {
+    async function del() {
+      const { data, error } = await supabase
+        .from("posts")
+        .delete("*")
+        .eq("id", Number(id))
+        .single();
+
+      setItem(data);
+      console.log("ListComp() data", data);
+    }
+    let result = confirm(id + ":를 삭제 할까요?");
+    if (result) del();
+  }
+
   return (
     <div>
       <ul>
@@ -48,17 +63,22 @@ function ListComp() {
                   <td>
                     <Link
                       className="link-secondary text-decoration-none"
-                      to={"../board/view/" + item.id}
+                      to={"/board/view/" + item.id}
                     >
                       {item.title}
                     </Link>
                   </td>
                   <td>{item.name}</td>
-                  <td>{item.created_at}</td>
                   <td>
-                    <a href="#" className="btn btn-danger btn-sm">
+                    {dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss")}
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => deleteid(item.id)}
+                    >
                       삭제
-                    </a>
+                    </button>
                   </td>
                 </tr>
               );

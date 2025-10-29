@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import supabase from "../../../utils/supabase";
-
+import dayjs from "dayjs";
 function ViewComp() {
   const { num } = useParams();
   console.log("ViewComp() num", num);
@@ -25,12 +25,20 @@ function ViewComp() {
 
   return (
     <div>
-      ViewComp
-      <br />
       <h3>{item.title}</h3>
-      <p>ID:{item.id}</p>
-      <p>작성자:{item.name}</p>
+      <p>{item.name}</p>
+      <p className="small">
+        {dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss")}
+      </p>
+      <hr />
       <p>{item.content}</p>
+      <div className="d-flex justify-content-end gap-3">
+        <button className="btn btn-primary btn-sm">
+          <Link to="../list" className="nav-link">
+            목록으로
+          </Link>
+        </button>
+      </div>
     </div>
   );
 }
