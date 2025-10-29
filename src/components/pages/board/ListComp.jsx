@@ -1,0 +1,73 @@
+import React from "react";
+import { useState, useEffect } from "react";
+import supabase from "../../../utils/supabase";
+import dayjs from "dayjs";
+import { Link, Route, Routes } from "react-router-dom";
+
+function ListComp() {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    async function getPosts() {
+      const { data } = await supabase.from("posts").select();
+      // const { data: posts } = data;
+
+      setPosts(data);
+      console.log("ListComp() data", data);
+    }
+
+    getPosts();
+  }, []);
+
+  return (
+    <div>
+      <ul>
+        {/* {posts.map((post, i) => (
+          <li key={post.id}>
+            <Link to={"../board/view/" + post.id} className="nav-link">
+              {post.id} / {post.title} / {post.name} / {post.content} /
+              {dayjs(post.created_at).format("YYYY-MM-DD HH:mm:ss")}
+            </Link>
+          </li>
+        ))} */}
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Title</th>
+              <th scope="col">Writer</th>
+              <th scope="col">Created At</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {posts.map((item) => {
+              return (
+                <tr key={item.id}>
+                  <th scope="row">{item.id}</th>
+                  <td>
+                    <Link
+                      className="link-secondary text-decoration-none"
+                      to={"../board/view/" + item.id}
+                    >
+                      {item.title}
+                    </Link>
+                  </td>
+                  <td>{item.name}</td>
+                  <td>{item.created_at}</td>
+                  <td>
+                    <a href="#" className="btn btn-danger btn-sm">
+                      삭제
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </ul>
+    </div>
+  );
+}
+
+export default ListComp;

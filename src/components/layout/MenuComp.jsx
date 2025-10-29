@@ -1,5 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import "../../App.css";
+
 function MenuComp() {
   return (
     <nav className="navbar navbar-expand-sm bg-body-tertiary ">
@@ -19,20 +21,21 @@ function MenuComp() {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          {/* ms- : margin start */}
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+          <ul className="navbar-nav menu ms-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <Link className="navbar-brand" to="/">
+              <NavLink className="navbar-brand" to="/">
                 Home
-              </Link>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <Link className="navbar-brand" to="/list">
-                List
-              </Link>
-              <Link className="navbar-brand" to="/home/about">
+              <NavLink className="navbar-brand" to="/board">
+                목록
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink className="navbar-brand" to="/about">
                 About
-              </Link>
+              </NavLink>
             </li>
           </ul>
         </div>
