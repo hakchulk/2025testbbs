@@ -14,6 +14,7 @@ function BoardComp() {
   // // board?name=hak
   // const name = searchParams.get("name");
   // const age = searchParams.get("age");
+
   return (
     <div className="container">
       <div className="d-flex justify-content-center gap-3 submenu">
@@ -28,7 +29,7 @@ function BoardComp() {
         <Route index element={<ListComp />}></Route>
         <Route path="list" element={<ListComp />}></Route>
         <Route path="write" element={<WriteComp />}></Route>
-        <Route path="view/:num" element={<ViewComp />}></Route>
+        <Route path="view/:id" element={<ViewComp />}></Route>
         <Route path="modify/:id" element={<ModifyComp />}></Route>
       </Routes>
     </div>
