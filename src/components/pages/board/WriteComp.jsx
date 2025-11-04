@@ -1,6 +1,7 @@
 import React from "react";
 import supabase from "../../../utils/supabase";
-import { Link, useNavigate } from "react-router-dom"; // 1. useNavigate를 임포트
+import { Link, Navigate, useNavigate } from "react-router-dom"; // 1. useNavigate를 임포트
+import { PostContext } from "../../../context/BoardContext";
 
 //////-----------------------
 function WriteComp() {
@@ -17,7 +18,6 @@ function WriteComp() {
   function eventHandler(e) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    console.log("e.target", e.target);
 
     validate({
       ...form,
@@ -37,6 +37,7 @@ function WriteComp() {
   const [errors, setErrors] = React.useState({});
 
   //-----------------------
+  // formData 를 사용 하지 않고 form를 사용 하면 안됨. async라서 문제 되는 것으로 추정
   function validate(formData) {
     const newError = {};
 
@@ -62,6 +63,8 @@ function WriteComp() {
     return newError;
   }
 
+  const { getPosts } = PostContext();
+
   //-----------------------
   function submitHandler(e) {
     async function write(formData) {
@@ -75,6 +78,7 @@ function WriteComp() {
           },
         ])
         .select();
+      getPosts();
       navigate("/board/list");
     }
 
@@ -94,6 +98,31 @@ function WriteComp() {
       <div className="container">
         <h3>글작성</h3>
         <form onSubmit={submitHandler}>
+          <div className="mb-3">
+            <div className="d-flex flex-column flex-md-row">
+              {/* html : for, react : htmlFor */}
+              <label
+                htmlFor="title"
+                className="form-lable"
+                style={{ width: "100px" }}
+              >
+                제목*
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="title"
+                name="title"
+                onChange={eventHandler}
+                placeholder="타이틀 입력"
+              />
+            </div>
+            {errors.title && (
+              <div className="form-text" style={{ color: "red" }}>
+                {errors.title}
+              </div>
+            )}
+          </div>
           <div className="mb-3">
             <div className="d-flex flex-column flex-md-row">
               {/* html : for, react : htmlFor */}
@@ -124,31 +153,6 @@ function WriteComp() {
             <div className="d-flex flex-column flex-md-row">
               {/* html : for, react : htmlFor */}
               <label
-                htmlFor="title"
-                className="form-lable"
-                style={{ width: "100px" }}
-              >
-                제목*
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="title"
-                name="title"
-                onChange={eventHandler}
-                placeholder="타이틀 입력"
-              />
-            </div>
-            {errors.title && (
-              <div className="form-text" style={{ color: "red" }}>
-                {errors.title}
-              </div>
-            )}
-          </div>
-          <div className="mb-3">
-            <div className="d-flex flex-column flex-md-row">
-              {/* html : for, react : htmlFor */}
-              <label
                 htmlFor="content"
                 className="form-lable"
                 style={{ width: "100px" }}
@@ -172,14 +176,15 @@ function WriteComp() {
           </div>
 
           {/* <button> 은 text로 취급 하기 떄문에 text-end가능 */}
-          <div className="text-end">
+          <div className="d-flex justify-content-end gap-2">
             <button
               type="submit"
-              className="btn btn-primary mx-3"
+              className="btn btn-primary"
               disabled={isSubmitDisabled}
             >
               글작성
             </button>
+
             <Link className="btn btn-warning" to="/board/list">
               취소
             </Link>

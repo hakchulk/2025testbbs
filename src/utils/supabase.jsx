@@ -5,7 +5,7 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export function DeletePostID(id, funcAfterDeleted) {
+export function deletePostByID(id, funcAfterDeleted) {
   async function del() {
     const { data, error } = await supabase
       .from("posts")
@@ -16,6 +16,17 @@ export function DeletePostID(id, funcAfterDeleted) {
   }
   const result = confirm(`id [${id}]를 삭제 할까요?`);
   if (result) del();
+}
+
+export async function getPostByID(id, setItem) {
+  const { data, error } = await supabase
+    .from("posts")
+    .select("*")
+    .eq("id", Number(id))
+    .single();
+
+  setItem(data);
+  console.log("getPost() data", data);
 }
 
 export default supabase;

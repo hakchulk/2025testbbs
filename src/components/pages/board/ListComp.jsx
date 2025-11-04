@@ -1,30 +1,18 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import supabase, { DeletePostID } from "../../../utils/supabase";
 import dayjs from "dayjs";
-import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Links, Route, Routes, useNavigate } from "react-router-dom";
+import { deletePostByID } from "../../../utils/supabase";
+import { PostContext } from "../../../context/BoardContext";
+import { useEffect } from "react";
 
 function ListComp() {
-  const [posts, setPosts] = useState([]);
-
-  async function getPosts() {
-    const { data } = await supabase
-      .from("posts")
-      .select()
-      .order("id", { ascending: false });
-    // const { data: posts } = data;
-
-    setPosts(data);
-    console.log("ListComp() data", data);
-  }
-
-  useEffect(() => {
-    getPosts();
-  }, []);
-
+  const { posts, getPosts } = PostContext();
   function deleteid(id) {
-    DeletePostID(id, () => getPosts());
+    deletePostByID(id, () => getPosts());
   }
+
+  // useEffect(() => {
+  //   getPosts();
+  // }, []);
 
   return (
     <div>
@@ -40,14 +28,19 @@ function ListComp() {
         <thead>
           <tr>
             <th scope="col">ID</th>
-            <th scope="col">Title</th>
+            <th scope="col" style={{ width: "60%" }}>
+              Title
+            </th>
             <th scope="col">Writer</th>
-            <th scope="col">Created At</th>
-            <th scope="col">Delete</th>
+            <th scope="col" style={{ width: "11rem" }}>
+              Created At
+            </th>
+            <th scope="col">수정</th>
+            <th scope="col">삭제</th>
           </tr>
         </thead>
         <tbody>
-          {posts.map((item) => {
+          {posts?.map((item) => {
             return (
               <tr key={item.id}>
                 <th scope="row">
@@ -68,6 +61,14 @@ function ListComp() {
                 </td>
                 <td>{item.name}</td>
                 <td>{dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss")}</td>
+                <td>
+                  <Link
+                    className="btn btn-primary btn-sm"
+                    to={`/board/modify/${item.id}`}
+                  >
+                    수정
+                  </Link>
+                </td>
                 <td>
                   <button
                     className="btn btn-danger btn-sm"
