@@ -1,10 +1,15 @@
-import React from "react";
-import supabase from "../../../utils/supabase";
+import React, { useState } from "react";
+import supabase from "../../utils/supabase";
 import { Link, Navigate, useNavigate } from "react-router-dom"; // 1. useNavigate를 임포트
-import { PostContext } from "../../../context/BoardContext";
-
+import { PostContext } from "../../context/BoardContext";
+import { useUser } from "../../context/UserContext";
+import UploadImageComp, { uploadFile } from "../../components/UploadImageComp";
 //////-----------------------
 function WriteComp() {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const { user } = useUser();
+  if (!user) return;
+
   const navigate = useNavigate();
   const [isSubmitDisabled, setIsSubmitDisabled] = React.useState(true);
 
@@ -17,21 +22,12 @@ function WriteComp() {
   //-----------------------
   function eventHandler(e) {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-
-    validate({
+    const newForm = {
       ...form,
       [e.target.name]: e.target.value,
-    });
-    // 이 방식은 마지막에 변경된 것만 처리 된다.
-    // setForm({
-    //   ...form,
-    //   [e.target.name]: e.target.value,
-    // });
-
-    // setForm((prev) => {
-    //   return { ...prev, [e.target.name]: e.target.value };
-    // });
+    };
+    setForm(newForm);
+    setErrors(validate(newForm));
   }
 
   const [errors, setErrors] = React.useState({});
@@ -54,10 +50,9 @@ function WriteComp() {
     if (formData.content.trim() === "") {
       newError.content = "내용을 입력하세요";
     }
-    setErrors(newError);
+
     setIsSubmitDisabled(Object.keys(newError).length === 0 ? false : true);
     console.log("formData", formData);
-    console.log("newError", newError);
     console.log("isSubmitDisabled", isSubmitDisabled);
 
     return newError;
@@ -68,6 +63,12 @@ function WriteComp() {
   //-----------------------
   function submitHandler(e) {
     async function write(formData) {
+      const { filename, uploadFileError } = await uploadFile(selectedFile);
+      if (uploadFileError) {
+        console.log("submitHandler(e) uploadFileError", uploadFileError);
+        return;
+      }
+
       const { data, error } = await supabase
         .from("posts")
         .insert([
@@ -75,6 +76,8 @@ function WriteComp() {
             title: formData.title,
             name: formData.name,
             content: formData.content,
+            user_id: user.id,
+            image_file: filename,
           },
         ])
         .select();
@@ -85,7 +88,6 @@ function WriteComp() {
     //-----------------------
     e.preventDefault(); // 기본 이벤트(페이지 이동) 막기
 
-    // validate();
     if (Object.keys(errors).length === 0) {
       setIsSubmitDisabled(true);
       write(form);
@@ -140,6 +142,7 @@ function WriteComp() {
                 name="name"
                 onChange={eventHandler}
                 placeholder="이름 입력"
+                defaultValue={user.name}
               />
             </div>
 
@@ -164,10 +167,14 @@ function WriteComp() {
                 id="content"
                 name="content"
                 onChange={eventHandler}
-                style={{ minHeight: "200px" }}
+                style={{ minHeight: "100px" }}
                 placeholder="내용 입력"
               />
             </div>
+            <UploadImageComp
+              selectedFile={selectedFile}
+              setSelectedFile={setSelectedFile}
+            ></UploadImageComp>
             {errors.content && (
               <div className="form-text" style={{ color: "red" }}>
                 {errors.content}

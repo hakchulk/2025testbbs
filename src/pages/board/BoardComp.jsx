@@ -4,9 +4,8 @@ import ListComp from "./ListComp";
 import WriteComp from "./WriteComp";
 import ViewComp from "./ViewComp";
 import ModifyComp from "./ModifyComp";
-import { useEffect, useState } from "react";
-import supabase from "../../../utils/supabase";
-import { BoardProviderComp } from "../../../context/BoardContext";
+
+import { BoardProviderComp } from "../../context/BoardContext";
 
 function BoardComp() {
   return (

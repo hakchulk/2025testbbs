@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { getImageURL } from "../components/UploadImageComp";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -25,8 +26,21 @@ export async function getPostByID(id, setItem) {
     .eq("id", Number(id))
     .single();
 
-  setItem(data);
-  console.log("getPost() data", data);
+  setItem({ ...data, ["imageUrl"]: getImageURL(data.image_file) });
+  console.log("getPostByID() data", data);
+}
+
+export async function getPostDataByID(id) {
+  console.log("getPostDataByID() id:" + id);
+
+  const { data, error } = await supabase
+    .from("posts")
+    .select("*")
+    .eq("id", Number(id))
+    .single();
+
+  console.log("getPostDataByID() data", data);
+  return data;
 }
 
 export default supabase;

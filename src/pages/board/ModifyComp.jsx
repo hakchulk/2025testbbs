@@ -1,19 +1,26 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { deletePostByID, getPostByID } from "../../../utils/supabase";
-import dayjs from "dayjs";
-import supabase from "../../../utils/supabase";
-import { PostContext } from "../../../context/BoardContext";
+
+import supabase, {
+  deletePostByID,
+  getPostByID,
+  getPostDataByID,
+} from "../../utils/supabase";
+import { PostContext } from "../../context/BoardContext";
+import UploadImageComp, {
+  uploadFile,
+  getImageURL,
+} from "../../components/UploadImageComp";
 
 function ModifyComp() {
+  const [selectedFile, setSelectedFile] = useState(null);
   const { id } = useParams();
   console.log("ModifyComp() id", id);
-  const [item, setItem] = useState({});
-  const [form, setForm] = useState(item);
-
+  const [form, setForm] = useState({});
   useEffect(() => {
+    console.log("ModifyComp() useEffect() start id:" + id);
+
     getPostByID(id, (postData) => {
-      setItem(postData);
       setForm(postData);
     });
   }, []);
@@ -80,12 +87,19 @@ function ModifyComp() {
   //-----------------------
   function submitHandler(e) {
     async function update(formData) {
+      const { filename, uploadFileError } = await uploadFile(selectedFile);
+      if (uploadFileError) {
+        console.log("submitHandler(e) uploadFileError", uploadFileError);
+        return;
+      }
+
       const { data, error } = await supabase
         .from("posts") // 1. Select the table
         .update({
           title: formData.title,
           name: formData.name,
           content: formData.content,
+          image_file: filename,
         }) // 2. Set the new values
         .eq("id", id) // 3. Filter the row(s) to update
         .select(); // 4. (Optional) Return the updated row(s)
@@ -112,7 +126,7 @@ function ModifyComp() {
   return (
     <div>
       <div className="container">
-        <h3>수정[{item.id}]</h3>
+        <h3>수정[{form.id}]</h3>
         <form onSubmit={submitHandler}>
           <div className="mb-3">
             <div className="d-flex flex-column flex-md-row">
@@ -131,7 +145,7 @@ function ModifyComp() {
                 name="title"
                 onChange={eventHandler}
                 placeholder="타이틀 입력"
-                defaultValue={item.title}
+                defaultValue={form.title}
               />
             </div>
             {errors.title && (
@@ -157,7 +171,7 @@ function ModifyComp() {
                 name="name"
                 onChange={eventHandler}
                 placeholder="이름 입력"
-                defaultValue={item.name}
+                defaultValue={form.name}
               />
             </div>
 
@@ -182,11 +196,17 @@ function ModifyComp() {
                 id="content"
                 name="content"
                 onChange={eventHandler}
-                style={{ minHeight: "200px" }}
+                style={{ minHeight: "100px" }}
                 placeholder="내용 입력"
-                defaultValue={item.content}
+                defaultValue={form.content}
               />
             </div>
+            <UploadImageComp
+              selectedFile={selectedFile}
+              setSelectedFile={setSelectedFile}
+              imageOrgUrl={form.imageUrl}
+            ></UploadImageComp>
+
             {errors.content && (
               <div className="form-text" style={{ color: "red" }}>
                 {errors.content}
@@ -205,7 +225,7 @@ function ModifyComp() {
             </button>
             <button
               className="btn btn-danger"
-              onClick={() => deleteid(item.id)}
+              onClick={() => deleteid(form.id)}
             >
               삭제
             </button>

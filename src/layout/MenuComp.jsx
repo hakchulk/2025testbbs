@@ -1,8 +1,10 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
-import "../../App.css";
+import "../App.css";
+import { useUser } from "../context/UserContext";
 
 function MenuComp() {
+  const { user, signOut } = useUser();
   return (
     <nav className="navbar navbar-expand-sm bg-body-tertiary ">
       <div className="container">
@@ -37,7 +39,21 @@ function MenuComp() {
                 About
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink className="navbar-brand" to="/member">
+                Member
+              </NavLink>
+            </li>
           </ul>
+          <div>
+            {user?.email ? (
+              <button className="btn" onClick={signOut}>
+                로그아웃[{user.email}]
+              </button>
+            ) : (
+              <Link to="/member/signin">로그인</Link>
+            )}
+          </div>
         </div>
       </div>
     </nav>

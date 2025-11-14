@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { deletePostByID, getPostByID } from "../../../utils/supabase";
+import { deletePostByID, getPostByID } from "../../utils/supabase";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom"; // 1. useNavigate를 임포트
-import { PostContext } from "../../../context/BoardContext";
+import { PostContext } from "../../context/BoardContext";
 
 function ViewComp() {
   const navigate = useNavigate();
@@ -36,7 +36,10 @@ function ViewComp() {
       <div>
         <hr />
         {/* 버튼과 사이 띄우기 */}
-        <p style={{ minHeight: "200px" }}>{item.content}</p>
+        <p style={{ minHeight: "100px" }}>{item.content}</p>
+      </div>
+      <div>
+        <img src={item.imageUrl} alt="" style={{ height: "400px" }} />
       </div>
       <div className="d-flex justify-content-end gap-2">
         <Link to="/board/list" className="btn btn-info">

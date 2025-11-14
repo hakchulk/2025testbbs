@@ -1,9 +1,9 @@
 import { createContext, useEffect, useState, useContext } from "react";
 import supabase from "../utils/supabase";
 
-const UserContext = createContext();
+const PContext = createContext();
 export function PostContext() {
-  const ret = useContext(UserContext);
+  const ret = useContext(PContext);
   if (!ret) throw new Error("이 훅은 UserProviderComp 안에 사용 해야 합니다.");
   return ret;
 }
@@ -25,9 +25,9 @@ export function BoardProviderComp({ children }) {
   }, []);
 
   return (
-    <UserContext.Provider value={{ posts, getPosts }}>
+    <PContext.Provider value={{ posts, getPosts }}>
       {children}
-    </UserContext.Provider>
+    </PContext.Provider>
   );
 }
 

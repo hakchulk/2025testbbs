@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
-import { Link, Links, Route, Routes, useNavigate } from "react-router-dom";
-import { deletePostByID } from "../../../utils/supabase";
-import { PostContext } from "../../../context/BoardContext";
+import { Link } from "react-router-dom";
+import { deletePostByID } from "../../utils/supabase";
+import { PostContext } from "../../context/BoardContext";
 import { useEffect } from "react";
 
 function ListComp() {
