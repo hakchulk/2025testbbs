@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { deletePostByID } from "../../utils/supabase";
 import { PostContext } from "../../context/BoardContext";
 import { useEffect } from "react";
+import { getImageURL } from "../../components/UploadImageComp";
 
 function ListComp() {
   const { posts, getPosts } = PostContext();
@@ -28,13 +29,19 @@ function ListComp() {
         <thead>
           <tr>
             <th scope="col">ID</th>
-            <th scope="col" style={{ width: "60%" }}>
+            <th scope="col" style={{ width: "50%" }}>
               Title
             </th>
-            <th scope="col">Writer</th>
+            <th scope="col" style={{ width: "11rem" }}>
+              Writer
+            </th>
             <th scope="col" style={{ width: "11rem" }}>
               Created At
             </th>
+            <th scope="col" style={{ width: "50px", height: "50px" }}>
+              Image
+            </th>
+
             <th scope="col">수정</th>
             <th scope="col">삭제</th>
           </tr>
@@ -61,6 +68,13 @@ function ListComp() {
                 </td>
                 <td>{item.name}</td>
                 <td>{dayjs(item.created_at).format("YYYY-MM-DD HH:mm:ss")}</td>
+                <td>
+                  <img
+                    src={getImageURL(item.image_file)}
+                    alt=""
+                    style={{ width: "50px", height: "50px", border: "none" }}
+                  />
+                </td>
                 <td>
                   <Link
                     className="btn btn-primary btn-sm"
